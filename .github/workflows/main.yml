@@ -64,15 +64,15 @@ env:
        run: |
         # If your function app project is not located in your repository's root
         # Please change the path to your directory for docker build
-        docker build . -t REGISTRY/IMAGE:TAG
-        docker push REGISTRY/IMAGE:TAG
+        docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
 
      - name: 'Run Azure Functions Container Action'
        uses: Azure/functions-container-action@v1
        id: fa
        with:
-        app-name: AZURE_FUNCTION_APP_NAMEE
-        image: REGISTRY/IMAGE:TAG
+          app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
         
 
 jobs:
@@ -112,12 +112,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
 
-      - name: 'Run Azure Functions Container Action'
-        uses: Azure/functions-container-action@v1
-        id: fa
-        with:
-          app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
-          image: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE }}:${{ env.TAG }}
+    
 
     #  - name: Deploy to functionapp
      #   uses: azure/CLI@v1
