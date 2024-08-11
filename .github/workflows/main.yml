@@ -4,7 +4,7 @@
 #
 # To configure this workflow:
 # 1. Set up the following secrets in your repository:
-#   - AZURE_RBAC_CREDENTIALS
+#   - AZURE_CREDENTIALS
 #   - REGISTRY_USERNAME
 #   - REGISTRY_PASSWORD
 # 2. Change env variables for your configuration.
@@ -45,37 +45,37 @@ env:
      runs-on: ubuntu-latest
      environment: dev
      steps:
-     - name: 'Checkout GitHub Action'
-       uses: actions/checkout@v3
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
 
-     - name: 'Login via Azure CLI'
-       uses: azure/login@v1
-       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-     - name: 'Docker Login'
-       uses: azure/docker-login@v1
-       with:
-        login-server: ${{ env.LOGIN_SERVER }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: 'Docker Login'
+        uses: azure/docker-login@v1
+        with:
+         login-server: ${{ env.LOGIN_SERVER }}
+         username: ${{ secrets.REGISTRY_USERNAME }}
+         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-     - name: 'Compose Customized Docker Image'
-       shell: bash
-       run: |
+      - name: 'Compose Customized Docker Image'
+        shell: bash
+        run: |
         # If your function app project is not located in your repository's root
         # Please change the path to your directory for docker build
-        docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
+          docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
 
-     - name: 'Run Azure Functions Container Action'
-       uses: Azure/functions-container-action@v1
-       id: fa
-       with:
+      - name: 'Run Azure Functions Container Action'
+        uses: Azure/functions-container-action@v1
+        id: fa
+        with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
           image: ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
 
-     - name: Azure logout
+    - name: Azure logout
        run: |
           az logout
         
