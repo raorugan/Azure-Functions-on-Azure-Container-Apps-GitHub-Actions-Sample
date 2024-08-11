@@ -23,7 +23,8 @@ name: Deploy container to Azure Functions App
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: [ main ]
+    branches: 
+     - main 
 
 permissions:
   contents: read
@@ -40,7 +41,7 @@ env:
 
 
   jobs:
-   build-and-deploy:
+    build-and-deploy:
      runs-on: ubuntu-latest
      environment: dev
      steps:
@@ -73,6 +74,10 @@ env:
        with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
           image: ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.TAG }}
+
+     - name: Azure logout
+       run: |
+          az logout
         
 
 
@@ -91,6 +96,4 @@ env:
       #  run: |
       #    echo "${{ steps.fa.outputs.app-url }}"
 
-      - name: Azure logout
-        run: |
-          az logout
+   
