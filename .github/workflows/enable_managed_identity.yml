@@ -16,6 +16,12 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+        # Assign the Contributor role to the client
+
+    - name: Create role contributor to the client
+      run: |
+           az role assignment create --assignee 7764265b-ba78-43dd-a399-05a16fc62047 --role Contributor --scope /subscriptions/5add39a7-8f0d-414c-aec0-410ae9c8d156/resourcegroups/GitHubActionsRG
+
         
 
     - name: Create User Assigned Managed Identity
