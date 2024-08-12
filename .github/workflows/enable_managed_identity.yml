@@ -1,0 +1,37 @@
+name: Enable Managed Identity
+
+on:
+ workflow_dispatch:
+
+jobs:
+  enable-managed-identity:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+        
+
+    - name: Create User Assigned Managed Identity
+      run: |
+        az identity create --resource-group GitHubActionsRG --name gHactionsampleusridentity
+
+    - name: Assign User Assigned Managed Identity to Function App
+      run: |
+        IDENTITY_ID=$(az identity show --resource-group GitHubActionsRG --name gHactionsampleusridentity --query 'id' -o tsv)
+        az functionapp identity assign --resource-group GitHubActionsRG --name ghactionfuncapp --identities $IDENTITY_ID
+
+  
+    - name: Assign AcrPull role  to Function App's User Assigned Managed Identity
+      run: |
+       # Get the ACR resource ID
+          ACR_ID=$(az acr show --name ghsampleacr --resource-group GitHubActionsRG --query 'id' -o tsv)
+
+       # Assign the AcrPull role to the Managed Identity
+         az role assignment create --assignee $IDENTITY_ID --role "AcrPull" --scope $ACR_ID
