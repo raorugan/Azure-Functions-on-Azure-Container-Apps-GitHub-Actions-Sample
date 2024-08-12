@@ -20,11 +20,11 @@ jobs:
 
     - name: Create User Assigned Managed Identity
       run: |
-        az identity create --resource-group GitHubActionsRG --name gHactionsampleusridentity
+        az identity create --resource-group GitHubActionsRG --name gHactionsampleusridentity1
 
     - name: Assign User Assigned Managed Identity to Function App
       run: |
-        IDENTITY_ID=$(az identity show --resource-group GitHubActionsRG --name gHactionsampleusridentity --query 'id' -o tsv)
+        IDENTITY_ID=$(az identity show --resource-group GitHubActionsRG --name gHactionsampleusridentity1 --query 'id' -o tsv)
         az functionapp identity assign --resource-group GitHubActionsRG --name ghactionfuncapp --identities $IDENTITY_ID
 
   
