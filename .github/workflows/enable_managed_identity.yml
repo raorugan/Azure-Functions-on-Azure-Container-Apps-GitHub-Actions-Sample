@@ -33,6 +33,9 @@ jobs:
       run: |
        # Get the ACR resource ID
           ACR_ID=$(az acr show --name ghsampleacr --resource-group GitHubActionsRG --query 'id' -o tsv)
+       # Get the IDENTITY OBJECT ID
+       IDENTITY_OBJECT_ID=$(az identity show --resource-group GitHubActionsRG --name gHactionsampleusridentity1 --query 'principalId' -o tsv)
 
        # Assign the AcrPull role to the Managed Identity
-         az role assignment create --assignee $IDENTITY_ID --role "AcrPull" --scope $ACR_ID
+       #  az role assignment create --assignee $IDENTITY_ID --role "AcrPull" --scope $ACR_ID
+       az role assignment create --assignee-object-id $IDENTITY_OBJECT_ID --assignee-principal-type ServicePrincipal --role "AcrPull" --scope $ACR_ID
